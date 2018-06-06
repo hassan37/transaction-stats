@@ -1,25 +1,36 @@
 package stats.web.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import stats.computation.StatsComputation;
-import stats.model.TransStats;
+import stats.model.Transaction;
+import stats.model.TransactionProcessingResponse;
+import stats.transactions.processing.TransactionProcessing;
 
 @RestController
-public class StatsController {
+public class TransactionController {
 
-	private final StatsComputation statsComputation;
+	private final TransactionProcessing transProc;
 
 	@Autowired
-	public StatsController(StatsComputation statsComputation) {
-		this.statsComputation = statsComputation;
+	public TransactionController(TransactionProcessing transProc) {
+		this.transProc = transProc;
 	}
 
-	@GetMapping(path = "/statistics", produces = "application/json")
-	public TransStats getStats() {
-		return statsComputation.getComputedStats();
-	}
 
+	@PostMapping(path = "/transactions", consumes = "application/json")
+	public ResponseEntity<String> postTransaction(@Valid @RequestBody final Transaction trans) {
+		TransactionProcessingResponse resp = transProc.process(trans);
+
+		if (resp.isTransAdded())
+			return ResponseEntity.status(HttpStatus.CREATED).build();
+
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
 }
