@@ -33,8 +33,7 @@ public class StatsCacheComputationSchedule {
 	}
 
 	private void refreshCache(Instant timestamp) {
-		// Cleaning is for future use.
-		/*cleaning.clean(cache, timestamp);*/
+		cleaning.clean(cache, timestamp);
 	}
 
 	private void computeStatistics(Instant timestamp) {
