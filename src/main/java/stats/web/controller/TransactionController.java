@@ -24,12 +24,12 @@ public class TransactionController {
 
 
 	@PostMapping(path = "/transactions", consumes = "application/json")
-	public HttpStatus postTransaction(@Valid @RequestBody final Transaction trans) {
+	public ResponseEntity<String> postTransaction(@Valid @RequestBody final Transaction trans) {
 		TransactionProcessingResponse resp = transProc.process(trans);
 
 		if (resp.isTransAdded())
-			return HttpStatus.CREATED;
+			return ResponseEntity.status(HttpStatus.CREATED).build();
 
-		return HttpStatus.NO_CONTENT;
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }
